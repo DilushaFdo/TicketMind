@@ -1,5 +1,6 @@
 package com.dilusha.TicketMind.controllers;
 
+import com.dilusha.TicketMind.dto.UsersResponse;
 import com.dilusha.TicketMind.models.User;
 import com.dilusha.TicketMind.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ public class UserController {
     UserService userService;
 
     @GetMapping("/")
-    public List<User> getUsers(){
+    public List<UsersResponse> getUsers(){
         return userService.getUsers();
     }
 

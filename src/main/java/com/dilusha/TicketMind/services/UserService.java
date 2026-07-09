@@ -1,5 +1,8 @@
 package com.dilusha.TicketMind.services;
 
+import com.dilusha.TicketMind.dto.RegisterRequest;
+import com.dilusha.TicketMind.dto.UsersResponse;
+import com.dilusha.TicketMind.enums.Role;
 import com.dilusha.TicketMind.models.User;
 import com.dilusha.TicketMind.models.UserPrincipal;
 import com.dilusha.TicketMind.repositories.UserRepository;
@@ -11,14 +14,25 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 @Service
 public class UserService implements UserDetailsService {
 
     @Autowired
     UserRepository userRepository;
 
-    public List<User> getUsers() {
-        return userRepository.findAll();
+    public List<UsersResponse> getUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(user -> new UsersResponse(
+                        user.getId(),
+                        user.getUsername(),
+                        user.getFirstName(),
+                        user.getLastName(),
+                        user.getActive()
+                ))
+                .toList();
     }
 
     @Override
@@ -31,4 +45,6 @@ public class UserService implements UserDetailsService {
         System.out.println("User found");
         return new UserPrincipal(user);
     }
+
+
 }

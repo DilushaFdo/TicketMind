@@ -1,7 +1,6 @@
 package com.dilusha.TicketMind.controllers;
 
 import com.dilusha.TicketMind.dto.UsersResponse;
-import com.dilusha.TicketMind.models.User;
 import com.dilusha.TicketMind.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

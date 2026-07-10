@@ -5,7 +5,6 @@ import com.dilusha.TicketMind.dto.RegisterRequest;
 import com.dilusha.TicketMind.models.User;
 import com.dilusha.TicketMind.repositories.UserRepository;
 import com.dilusha.TicketMind.services.AuthService;
-import com.dilusha.TicketMind.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;

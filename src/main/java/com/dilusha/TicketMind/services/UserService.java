@@ -1,8 +1,6 @@
 package com.dilusha.TicketMind.services;
 
-import com.dilusha.TicketMind.dto.RegisterRequest;
 import com.dilusha.TicketMind.dto.UsersResponse;
-import com.dilusha.TicketMind.enums.Role;
 import com.dilusha.TicketMind.models.User;
 import com.dilusha.TicketMind.models.UserPrincipal;
 import com.dilusha.TicketMind.repositories.UserRepository;
@@ -11,10 +9,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
 
 @Service
 public class UserService implements UserDetailsService {

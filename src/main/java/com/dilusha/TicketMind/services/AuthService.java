@@ -1,31 +1,28 @@
 package com.dilusha.TicketMind.services;
-
-import com.dilusha.TicketMind.dto.LoginRequest;
-import com.dilusha.TicketMind.dto.LoginResponse;
-import com.dilusha.TicketMind.dto.RegisterRequest;
+import com.dilusha.TicketMind.dto.*;
 import com.dilusha.TicketMind.enums.Role;
 import com.dilusha.TicketMind.models.RefreshToken;
 import com.dilusha.TicketMind.models.User;
 import com.dilusha.TicketMind.repositories.RefreshTokenRepository;
 import com.dilusha.TicketMind.repositories.UserRepository;
 import com.dilusha.TicketMind.util.JWTUtil;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 
 @Service
 public class AuthService {
 
     @Autowired
     RefreshTokenRepository refreshTokenRepository;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -39,7 +36,10 @@ public class AuthService {
     public User register(RegisterRequest request) {
         User user = new User();
         user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
+
+        user.setPassword(
+                passwordEncoder.encode(request.getPassword()));
+
         user.setLastName(request.getLastName());
         user.setFirstName(request.getFirstName());
 
@@ -47,16 +47,14 @@ public class AuthService {
         user.setLock(false);
         user.setActive(true);
 
-
         return userRepository.save(user);
     }
 
-    public ResponseEntity<LoginResponse> verify(LoginRequest request) {
+    public LoginResponse verify(LoginRequest request) {
 
         Authentication authentication =
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(),request.getPassword()));
 
-        if(authentication.isAuthenticated()){
             User user = userRepository.findByUsername(request.getUsername());
 
             String accessToken = jwtUtil.generateAccessToken(user.getUsername());
@@ -77,10 +75,45 @@ public class AuthService {
 
             refreshTokenRepository.save(newRefreshToken);
 
-            return ResponseEntity.ok(new LoginResponse(accessToken, refreshToken));
+            return new LoginResponse(accessToken, refreshToken);
+
+    }
+
+    @Transactional
+    public RefreshResponse refreshToken(RefreshRequest request) {
+        RefreshToken storedToken = refreshTokenRepository
+                .findByToken(request.getRefreshToken())
+                .orElseThrow(() -> new RuntimeException("Refresh token not found"));
+
+        if(storedToken.getRevoked()){
+            throw new RuntimeException("Refresh token revoked");
+        }
+        String refreshToken = storedToken.getToken();
+        String type = jwtUtil.extractTokenType(refreshToken);
+        String username = jwtUtil.extractUsername(refreshToken);
+
+        if(jwtUtil.isTokenExpired(refreshToken)){
+            throw new RuntimeException("Refresh token Expired");
         }
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if(!"refresh".equals(type)){
+            throw new RuntimeException("Invalid token type");
+        }
+
+        storedToken.setRevoked(true);
+        refreshTokenRepository.save(storedToken);
+
+        String newAccessToken = jwtUtil.generateAccessToken(username);
+        String newRefreshToken = jwtUtil.generateRefreshToken(username);
+
+        RefreshToken newStoredRefreshToken = new RefreshToken();
+        newStoredRefreshToken.setToken(newRefreshToken);
+        newStoredRefreshToken.setRevoked(false);
+        newStoredRefreshToken.setUser(storedToken.getUser());
+
+        refreshTokenRepository.save(newStoredRefreshToken);
+
+        return new RefreshResponse(newAccessToken, newRefreshToken);
 
     }
 }

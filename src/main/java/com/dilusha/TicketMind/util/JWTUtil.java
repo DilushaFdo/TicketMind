@@ -71,7 +71,7 @@ public class JWTUtil {
                 && !isTokenExpired(token);
     }
 
-    private boolean isTokenExpired(String token){
+    public boolean isTokenExpired(String token){
 
         Date expiration =
                 Jwts.parser()
@@ -83,5 +83,14 @@ public class JWTUtil {
 
 
         return expiration.before(new Date());
+    }
+
+    public String extractTokenType(String token){
+        return Jwts.parser()
+                .verifyWith(getSignKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("type", String.class);
     }
 }

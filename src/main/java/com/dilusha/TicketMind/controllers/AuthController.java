@@ -2,26 +2,19 @@ package com.dilusha.TicketMind.controllers;
 
 import com.dilusha.TicketMind.dto.*;
 import com.dilusha.TicketMind.models.User;
-import com.dilusha.TicketMind.repositories.UserRepository;
 import com.dilusha.TicketMind.services.AuthService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/auth")
 public class AuthController {
-    @Autowired
-    UserRepository userRepository;
 
     @Autowired
     AuthService authService;
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
     public User register(@Valid @RequestBody RegisterRequest request){
@@ -29,18 +22,27 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request){
-        return ResponseEntity.ok(authService.verify(request));
+    public ResponseEntity<LoginResponse> login(
+            @RequestBody LoginRequest request,
+            HttpServletResponse response){
+        System.out.println("LOGIN");
+        return ResponseEntity.ok(authService.verify(request,response));
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<RefreshResponse> refreshToken(@RequestBody RefreshRequest request){
-        return ResponseEntity.ok(authService.refreshToken(request));
+    public ResponseEntity<RefreshResponse> refreshToken(
+            @CookieValue("refreshToken") String refreshToken,
+            HttpServletResponse response){
+        return ResponseEntity.ok(authService.refreshToken(refreshToken, response));
     }
 
-//    @PostMapping("/logout")
-//    public String logout(@RequestBody LogoutRequest logoutRequest){
-//
-//    }
+    @PostMapping("/logout")
+    public String logout(
+            @CookieValue(value = "refreshToken", required = false) String refreshToken,
+            HttpServletResponse response){
+
+            authService.logout(refreshToken, response);
+        return "Successfully logged out";
+    }
 
 }

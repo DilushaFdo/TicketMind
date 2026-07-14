@@ -6,13 +6,19 @@ import com.dilusha.TicketMind.models.User;
 import com.dilusha.TicketMind.repositories.RefreshTokenRepository;
 import com.dilusha.TicketMind.repositories.UserRepository;
 import com.dilusha.TicketMind.util.JWTUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
+import java.util.Date;
 
 
 @Service
@@ -50,15 +56,36 @@ public class AuthService {
         return userRepository.save(user);
     }
 
-    public LoginResponse verify(LoginRequest request) {
+    public LoginResponse verify(
+            LoginRequest request,
+            HttpServletResponse response) {
 
         Authentication authentication =
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(),request.getPassword()));
 
-            User user = userRepository.findByUsername(request.getUsername());
+        User user = userRepository.findByUsername(request.getUsername());
 
-            String accessToken = jwtUtil.generateAccessToken(user.getUsername());
-            String refreshToken = jwtUtil.generateRefreshToken(user.getUsername());
+        String accessToken = jwtUtil.generateAccessToken(user.getUsername());
+        String refreshToken = jwtUtil.generateRefreshToken(user.getUsername());
+
+        Date expiryDate = jwtUtil.extractExpirationDate(refreshToken);
+
+        long secondsUntilExpiry =
+                (expiryDate.getTime() - System.currentTimeMillis()) / 1000;
+
+        ResponseCookie cookie = ResponseCookie
+                .from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(false)
+                .path("/auth")
+                .maxAge(Duration.ofSeconds(secondsUntilExpiry))
+                .sameSite("Strict")
+                .build();
+
+        response.addHeader(
+                HttpHeaders.SET_COOKIE,
+                cookie.toString()
+        );
 
 //            Date expiryDate = jwtUtil.extractExpirationDate(refreshToken);
 
@@ -75,20 +102,21 @@ public class AuthService {
 
             refreshTokenRepository.save(newRefreshToken);
 
-            return new LoginResponse(accessToken, refreshToken);
-
+            return new LoginResponse(accessToken);
     }
 
     @Transactional
-    public RefreshResponse refreshToken(RefreshRequest request) {
+    public RefreshResponse refreshToken(
+            String refreshToken,
+            HttpServletResponse response) {
         RefreshToken storedToken = refreshTokenRepository
-                .findByToken(request.getRefreshToken())
+                .findByToken(refreshToken)
                 .orElseThrow(() -> new RuntimeException("Refresh token not found"));
 
         if(storedToken.getRevoked()){
             throw new RuntimeException("Refresh token revoked");
         }
-        String refreshToken = storedToken.getToken();
+
         String type = jwtUtil.extractTokenType(refreshToken);
         String username = jwtUtil.extractUsername(refreshToken);
 
@@ -113,7 +141,52 @@ public class AuthService {
 
         refreshTokenRepository.save(newStoredRefreshToken);
 
-        return new RefreshResponse(newAccessToken, newRefreshToken);
+        ResponseCookie cookie = ResponseCookie
+                .from("refreshToken", newRefreshToken)
+                .path("/")
+                .httpOnly(true)
+                .secure(false)
+                .maxAge(Duration.ofDays(7))
+                .sameSite("Strict")
+                .build();
+
+        response.addHeader(
+                HttpHeaders.SET_COOKIE,
+                cookie.toString()
+        );
+
+        return new RefreshResponse(newAccessToken);
+
+    }
+
+    public void logout(String refreshToken, HttpServletResponse response) {
+
+        if(refreshToken != null){
+
+            RefreshToken storedToken =
+                    refreshTokenRepository.findByToken(refreshToken)
+                            .orElse(null);
+
+            if(storedToken != null){
+                storedToken.setRevoked(true);
+                refreshTokenRepository.save(storedToken);
+            }
+        }
+
+        ResponseCookie deleteCookie=
+                ResponseCookie.from("refreshToken","")
+                        .secure(false)
+                        .path("/auth")
+                        .maxAge(0)
+                        .httpOnly(true)
+                        .sameSite("STRICT")
+                        .build();
+
+        response.addHeader(
+                HttpHeaders.SET_COOKIE,
+                deleteCookie.toString()
+        );
+
 
     }
 }

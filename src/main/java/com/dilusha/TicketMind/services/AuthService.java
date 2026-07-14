@@ -49,7 +49,7 @@ public class AuthService {
         user.setLastName(request.getLastName());
         user.setFirstName(request.getFirstName());
 
-        user.setRole(Role.ROLE_USER);
+        user.setRole(Role.USER);
         user.setLock(false);
         user.setActive(true);
 
@@ -65,7 +65,7 @@ public class AuthService {
 
         User user = userRepository.findByUsername(request.getUsername());
 
-        String accessToken = jwtUtil.generateAccessToken(user.getUsername());
+        String accessToken = jwtUtil.generateAccessToken(user);
         String refreshToken = jwtUtil.generateRefreshToken(user.getUsername());
 
         Date expiryDate = jwtUtil.extractExpirationDate(refreshToken);
@@ -109,6 +109,7 @@ public class AuthService {
     public RefreshResponse refreshToken(
             String refreshToken,
             HttpServletResponse response) {
+
         RefreshToken storedToken = refreshTokenRepository
                 .findByToken(refreshToken)
                 .orElseThrow(() -> new RuntimeException("Refresh token not found"));
@@ -118,7 +119,6 @@ public class AuthService {
         }
 
         String type = jwtUtil.extractTokenType(refreshToken);
-        String username = jwtUtil.extractUsername(refreshToken);
 
         if(jwtUtil.isTokenExpired(refreshToken)){
             throw new RuntimeException("Refresh token Expired");
@@ -131,8 +131,10 @@ public class AuthService {
         storedToken.setRevoked(true);
         refreshTokenRepository.save(storedToken);
 
-        String newAccessToken = jwtUtil.generateAccessToken(username);
-        String newRefreshToken = jwtUtil.generateRefreshToken(username);
+        User user = storedToken.getUser();
+
+        String newAccessToken = jwtUtil.generateAccessToken(user);
+        String newRefreshToken = jwtUtil.generateRefreshToken(user.getUsername());
 
         RefreshToken newStoredRefreshToken = new RefreshToken();
         newStoredRefreshToken.setToken(newRefreshToken);
@@ -186,7 +188,6 @@ public class AuthService {
                 HttpHeaders.SET_COOKIE,
                 deleteCookie.toString()
         );
-
 
     }
 }

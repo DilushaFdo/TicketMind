@@ -1,5 +1,6 @@
 package com.dilusha.TicketMind.util;
 
+import com.dilusha.TicketMind.models.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,10 +33,11 @@ public class JWTUtil {
                 .compact();
     }
 
-    public String generateAccessToken(String username) {
+    public String generateAccessToken(User user) {
         return  Jwts.builder()
-                    .setSubject(username)
+                    .setSubject(user.getUsername())
                     .claim("type", "access")
+                    .claim("role", user.getRole().name())
                     .setIssuedAt(new Date(System.currentTimeMillis()))
                     .expiration(new Date(System.currentTimeMillis() + expirationTime))
                     .signWith(getSignKey())

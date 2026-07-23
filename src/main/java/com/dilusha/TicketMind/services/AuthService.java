@@ -3,6 +3,7 @@ import com.dilusha.TicketMind.dto.*;
 import com.dilusha.TicketMind.enums.Role;
 import com.dilusha.TicketMind.models.RefreshToken;
 import com.dilusha.TicketMind.models.User;
+import com.dilusha.TicketMind.models.UserPrincipal;
 import com.dilusha.TicketMind.repositories.RefreshTokenRepository;
 import com.dilusha.TicketMind.repositories.UserRepository;
 import com.dilusha.TicketMind.util.JWTUtil;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -190,4 +192,10 @@ public class AuthService {
         );
 
     }
+
+    public User getCurrentUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return ((UserPrincipal) authentication.getPrincipal()).getUser();
+    }
+
 }

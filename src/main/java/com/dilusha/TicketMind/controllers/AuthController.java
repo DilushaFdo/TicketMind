@@ -3,6 +3,8 @@ package com.dilusha.TicketMind.controllers;
 import com.dilusha.TicketMind.dto.*;
 import com.dilusha.TicketMind.models.User;
 import com.dilusha.TicketMind.services.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,7 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
+    @Operation(security = @SecurityRequirement(name = "Bearer Authentication"))
     public String logout(
             @CookieValue(value = "refreshToken", required = false) String refreshToken,
             HttpServletResponse response){

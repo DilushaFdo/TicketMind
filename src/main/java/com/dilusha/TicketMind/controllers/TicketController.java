@@ -1,9 +1,6 @@
 package com.dilusha.TicketMind.controllers;
 
-import com.dilusha.TicketMind.dto.TicketRequest;
-import com.dilusha.TicketMind.dto.TicketResponse;
-import com.dilusha.TicketMind.dto.TicketUpdateRequest;
-import com.dilusha.TicketMind.dto.TicketsResponse;
+import com.dilusha.TicketMind.dto.*;
 import com.dilusha.TicketMind.services.TicketService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -23,7 +20,7 @@ public class TicketController {
     TicketService ticketService;
 
     @Operation(security = @SecurityRequirement(name = "Bearer Authentication"))
-    @GetMapping("/tickets")
+    @GetMapping
     public ResponseEntity<List<TicketsResponse>> getAllTickets(){
         return ResponseEntity.ok(
                 ticketService.getAllTickets()
@@ -37,7 +34,7 @@ public class TicketController {
     }
 
     @Operation(security = @SecurityRequirement(name = "Bearer Authentication"))
-    @PostMapping("/tickets")
+    @PostMapping
     public ResponseEntity<TicketsResponse> createTicket(@Valid @RequestBody TicketRequest ticketRequest){
         TicketsResponse response = ticketService.addTicket(ticketRequest);
 
@@ -57,5 +54,35 @@ public class TicketController {
     public ResponseEntity<Void> deleteTicket(@PathVariable int ticketId){
         ticketService.deleteTicket(ticketId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{ticketId}/admin")
+    public ResponseEntity<TicketResponse> adminUpdateTicket(
+            @PathVariable int ticketId,
+            @Valid @RequestBody TicketAdminUpdateRequest request) {
+
+        return ResponseEntity.ok(
+                ticketService.adminUpdateTicket(ticketId, request)
+        );
+    }
+
+    @PatchMapping("/{ticketId}/status")
+    public ResponseEntity<TicketResponse> updateTicketStatus(
+            @PathVariable int ticketId,
+            @Valid @RequestBody TicketStatusRequest request) {
+
+        return ResponseEntity.ok(
+                ticketService.updateTicketStatus(ticketId, request)
+        );
+    }
+
+    @PatchMapping("/{ticketId}/assign")
+    public ResponseEntity<TicketsResponse> assignTicket(
+            @PathVariable int ticketId,
+            @Valid @RequestBody TicketAssignmentRequest request) {
+
+        return ResponseEntity.ok(
+                ticketService.assignTicket(ticketId, request)
+        );
     }
 }

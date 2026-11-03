@@ -1,6 +1,7 @@
 package com.dilusha.TicketMind.services;
 import com.dilusha.TicketMind.dto.*;
 import com.dilusha.TicketMind.enums.Role;
+import com.dilusha.TicketMind.exceptions.DuplicateUsernameException;
 import com.dilusha.TicketMind.models.RefreshToken;
 import com.dilusha.TicketMind.models.User;
 import com.dilusha.TicketMind.models.UserPrincipal;
@@ -41,7 +42,12 @@ public class AuthService {
     @Autowired
     JWTUtil jwtUtil;
 
-    public User register(RegisterRequest request) {
+    public RegisterResponse register(RegisterRequest request) {
+
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new DuplicateUsernameException("Username already exists");
+        }
+
         User user = new User();
         user.setUsername(request.getUsername());
 
@@ -55,7 +61,15 @@ public class AuthService {
         user.setLock(false);
         user.setActive(true);
 
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        return new RegisterResponse(
+                savedUser.getId(),
+                savedUser.getUsername(),
+                savedUser.getFirstName(),
+                savedUser.getLastName(),
+                "User registered successfully"
+        );
     }
 
     public LoginResponse verify(

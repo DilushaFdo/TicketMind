@@ -25,9 +25,9 @@ public class TicketsResponse {
 
     private TicketPriority priority;
 
-    private User createdBy;
+    private UserSummaryResponse createdBy;
 
-    private User assignedTo;
+    private UserSummaryResponse assignedTo;
 
     private LocalDateTime createdAt;
 

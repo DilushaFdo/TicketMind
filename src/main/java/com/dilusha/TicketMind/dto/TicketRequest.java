@@ -23,6 +23,5 @@ public class TicketRequest {
     @NotNull
     private TicketPriority priority;
 
-    private Integer assignedToId;
 
 }

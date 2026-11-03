@@ -18,6 +18,4 @@ public class TicketUpdateRequest {
     @NotBlank
     private String description;
 
-    @NotNull
-    private TicketPriority priority;
 }

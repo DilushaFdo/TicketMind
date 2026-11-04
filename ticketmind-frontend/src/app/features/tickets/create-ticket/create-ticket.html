@@ -1,0 +1,117 @@
+<div class="create-ticket-page">
+
+  <div class="page-header">
+    <div>
+      <h1>Create Support Ticket</h1>
+      <p>Describe your issue and our support team will assist you.</p>
+    </div>
+
+    <button type="button" class="back-button" (click)="cancel()">
+      Back to Tickets
+    </button>
+  </div>
+
+  <div class="form-card">
+
+    <form [formGroup]="ticketForm" (ngSubmit)="onSubmit()">
+
+      <!-- Ticket Title -->
+      <div class="form-group">
+        <label for="title">Ticket Title</label>
+
+        <input
+          id="title"
+          type="text"
+          formControlName="title"
+          placeholder="Briefly describe your issue"
+        />
+
+        @if (ticketForm.get('title')?.touched &&
+             ticketForm.get('title')?.hasError('required')) {
+          <small class="error-message">
+            Ticket title is required.
+          </small>
+        }
+
+        @if (ticketForm.get('title')?.touched &&
+             ticketForm.get('title')?.hasError('minlength')) {
+          <small class="error-message">
+            Title must contain at least 5 characters.
+          </small>
+        }
+
+        @if (ticketForm.get('title')?.touched &&
+             ticketForm.get('title')?.hasError('maxlength')) {
+          <small class="error-message">
+            Title cannot exceed 100 characters.
+          </small>
+        }
+      </div>
+
+      <!-- Ticket Description -->
+      <div class="form-group">
+        <label for="description">Description</label>
+
+        <textarea
+          id="description"
+          rows="6"
+          formControlName="description"
+          placeholder="Explain your issue in detail..."
+        ></textarea>
+
+        @if (ticketForm.get('description')?.touched &&
+             ticketForm.get('description')?.hasError('required')) {
+          <small class="error-message">
+            Description is required.
+          </small>
+        }
+
+        @if (ticketForm.get('description')?.touched &&
+             ticketForm.get('description')?.hasError('minlength')) {
+          <small class="error-message">
+            Description must contain at least 10 characters.
+          </small>
+        }
+
+        @if (ticketForm.get('description')?.touched &&
+             ticketForm.get('description')?.hasError('maxlength')) {
+          <small class="error-message">
+            Description cannot exceed 1000 characters.
+          </small>
+        }
+      </div>
+
+      <!-- Priority -->
+      <div class="form-group">
+        <label for="priority">Priority</label>
+
+        <select id="priority" formControlName="priority">
+          <option value="LOW">Low</option>
+          <option value="MEDIUM">Medium</option>
+          <option value="HIGH">High</option>
+          <option value="URGENT">Urgent</option>
+        </select>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+
+        <button
+          type="button"
+          class="cancel-button"
+          (click)="cancel()"
+        >
+          Cancel
+        </button>
+
+        <button type="submit" class="submit-button">
+          Create Ticket
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>

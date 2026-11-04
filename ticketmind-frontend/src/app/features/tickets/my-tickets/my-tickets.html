@@ -1,0 +1,81 @@
+<div class="tickets-page">
+
+  <div class="page-header">
+    <div>
+      <h1>My Tickets</h1>
+      <p>View and manage your support requests.</p>
+    </div>
+
+   <button
+    type="button"
+    class="create-ticket-button"
+    (click)="createTicket()">
+    + Create Ticket
+</button>
+  </div>
+
+  <div class="ticket-summary">
+
+    <div class="summary-card">
+      <span>Total Tickets</span>
+      <h2>{{ tickets.length }}</h2>
+    </div>
+
+    <div class="summary-card">
+      <span>Open Tickets</span>
+      <h2>
+        {{ tickets.filter(t => t.status === 'OPEN').length }}
+      </h2>
+    </div>
+
+    <div class="summary-card">
+      <span>Resolved Tickets</span>
+      <h2>
+        {{ tickets.filter(t => t.status === 'RESOLVED').length }}
+      </h2>
+    </div>
+
+  </div>
+
+  <div class="ticket-list">
+
+    <div class="list-header">
+      <h2>Recent Tickets</h2>
+    </div>
+
+    @for (ticket of tickets; track ticket.id) {
+
+      <div class="ticket-card" (click)="viewTicket(ticket.id)">
+
+        <div class="ticket-main">
+
+          <div class="ticket-title">
+            <h3>{{ ticket.title }}</h3>
+            <span class="ticket-id">#{{ ticket.id }}</span>
+          </div>
+
+          <p>{{ ticket.description }}</p>
+
+          <div class="ticket-meta">
+            <span class="status" [class]="ticket.status.toLowerCase()">
+              {{ ticket.status }}
+            </span>
+
+            <span class="priority" [class]="ticket.priority.toLowerCase()">
+              {{ ticket.priority }}
+            </span>
+
+            <span class="ticket-date">
+              Created: {{ ticket.createdAt }}
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+
+    }
+
+  </div>
+
+</div>

@@ -1,0 +1,171 @@
+.tickets-page {
+  width: 100%;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+
+  h1 {
+    color: #172554;
+    font-size: 26px;
+    margin-bottom: 6px;
+  }
+
+  p {
+    color: #64748b;
+    margin: 0;
+  }
+}
+
+.create-ticket-button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 7px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background: #1d4ed8;
+  }
+}
+
+.ticket-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.summary-card {
+  background: white;
+  padding: 22px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+
+  span {
+    color: #64748b;
+    font-size: 14px;
+  }
+
+  h2 {
+    color: #172554;
+    font-size: 28px;
+    margin: 12px 0 0;
+  }
+}
+
+.ticket-list {
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  padding: 24px;
+}
+
+.list-header {
+  margin-bottom: 20px;
+
+  h2 {
+    font-size: 18px;
+    color: #172554;
+  }
+}
+
+.ticket-card {
+  padding: 20px 0;
+  border-top: 1px solid #e2e8f0;
+}
+
+.ticket-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  h3 {
+    font-size: 16px;
+    color: #172554;
+    margin: 0;
+  }
+}
+
+.ticket-id {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.ticket-main > p {
+  color: #64748b;
+  font-size: 14px;
+  margin: 10px 0 16px;
+}
+
+.ticket-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.status,
+.priority {
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status.open {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.status.in_progress {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status.resolved {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.priority.low {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.priority.medium {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.priority.high {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.priority.urgent {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.ticket-date {
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+@media (max-width: 768px) {
+  .ticket-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .page-header {
+    align-items: flex-start;
+    gap: 16px;
+    flex-direction: column;
+  }
+}

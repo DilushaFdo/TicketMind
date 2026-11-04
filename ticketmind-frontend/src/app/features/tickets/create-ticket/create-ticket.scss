@@ -1,0 +1,134 @@
+.create-ticket-page {
+  width: 100%;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+
+  h1 {
+    color: #172554;
+    font-size: 26px;
+    margin-bottom: 6px;
+  }
+
+  p {
+    color: #64748b;
+    margin: 0;
+  }
+}
+
+.back-button {
+  background: white;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  padding: 10px 16px;
+  border-radius: 7px;
+  cursor: pointer;
+
+  &:hover {
+    background: #f1f5f9;
+  }
+}
+
+.form-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 32px;
+  max-width: 800px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
+
+  label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 8px;
+  }
+
+  input,
+  textarea,
+  select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+
+    &:focus {
+      border-color: #2563eb;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+  }
+}
+
+.error-message {
+  color: #dc2626;
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.cancel-button,
+.submit-button {
+  padding: 12px 20px;
+  border-radius: 7px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cancel-button {
+  background: white;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+}
+
+.submit-button {
+  background: #2563eb;
+  border: none;
+  color: white;
+
+  &:hover {
+    background: #1d4ed8;
+  }
+}
+
+@media (max-width: 600px) {
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .form-card {
+    padding: 20px;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+
+    button {
+      width: 100%;
+    }
+  }
+}

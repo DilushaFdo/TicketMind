@@ -1,0 +1,71 @@
+<div class="ticket-details-page">
+
+  @if (ticket) {
+    <div class="page-header">
+      <div>
+        <h1>Ticket Details</h1>
+        <p>View information about your support request.</p>
+      </div>
+
+      <button type="button" class="back-button" (click)="goBack()">
+        Back to Tickets
+      </button>
+    </div>
+
+    <div class="ticket-card">
+
+      <div class="ticket-card-header">
+        <div>
+          <span class="ticket-id">Ticket #{{ ticket.id }}</span>
+          <h2>{{ ticket.title }}</h2>
+        </div>
+
+        <div class="status-control">
+  <label for="status">Ticket Status</label>
+
+  <select
+    id="status"
+    [value]="ticket.status"
+    (change)="updateStatus($event)">
+
+    <option value="OPEN">Open</option>
+    <option value="IN_PROGRESS">In Progress</option>
+    <option value="RESOLVED">Resolved</option>
+
+  </select>
+</div>
+      </div>
+
+      <div class="ticket-info">
+        <div class="info-item">
+          <label>Priority</label>
+          <span class="priority-badge"
+                [class]="ticket.priority.toLowerCase()">
+            {{ ticket.priority }}
+          </span>
+        </div>
+
+        <div class="info-item">
+          <label>Created Date</label>
+          <span>{{ ticket.createdAt }}</span>
+        </div>
+      </div>
+
+      <div class="description-section">
+        <h3>Description</h3>
+        <p>{{ ticket.description }}</p>
+      </div>
+
+    </div>
+  } @else {
+    <div class="not-found">
+      <h2>Ticket Not Found</h2>
+      <p>The ticket you're looking for doesn't exist.</p>
+
+      <button type="button" class="back-button" (click)="goBack()">
+        Back to Tickets
+      </button>
+    </div>
+  }
+
+</div>

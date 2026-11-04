@@ -1,0 +1,128 @@
+<div class="register-container">
+
+  <div class="register-card">
+
+    <div class="register-header">
+      <h1>TicketMind</h1>
+      <h2>Create your account</h2>
+      <p>Join TicketMind to manage your support tickets.</p>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <input
+            id="firstName"
+            type="text"
+            formControlName="firstName"
+            placeholder="First name"
+          />
+
+          @if (registerForm.get('firstName')?.touched &&
+               registerForm.get('firstName')?.hasError('required')) {
+            <small class="error-message">First name is required.</small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <input
+            id="lastName"
+            type="text"
+            formControlName="lastName"
+            placeholder="Last name"
+          />
+
+          @if (registerForm.get('lastName')?.touched &&
+               registerForm.get('lastName')?.hasError('required')) {
+            <small class="error-message">Last name is required.</small>
+          }
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          id="username"
+          type="text"
+          formControlName="username"
+          placeholder="Choose a username"
+        />
+
+        @if (registerForm.get('username')?.touched &&
+             registerForm.get('username')?.hasError('required')) {
+          <small class="error-message">Username is required.</small>
+        }
+
+        @if (registerForm.get('username')?.touched &&
+             registerForm.get('username')?.hasError('minlength')) {
+          <small class="error-message">
+            Username must contain at least 3 characters.
+          </small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="Create a password"
+        />
+
+        @if (registerForm.get('password')?.touched &&
+             registerForm.get('password')?.hasError('required')) {
+          <small class="error-message">Password is required.</small>
+        }
+
+        @if (registerForm.get('password')?.touched &&
+             registerForm.get('password')?.hasError('minlength')) {
+          <small class="error-message">
+            Password must contain at least 8 characters.
+          </small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input
+          id="confirmPassword"
+          type="password"
+          formControlName="confirmPassword"
+          placeholder="Confirm your password"
+        />
+
+        @if (registerForm.get('confirmPassword')?.touched &&
+             registerForm.get('confirmPassword')?.hasError('required')) {
+          <small class="error-message">
+            Please confirm your password.
+          </small>
+        }
+
+        @if (registerForm.get('confirmPassword')?.touched &&
+             registerForm.hasError('passwordMismatch')) {
+          <small class="error-message">
+            Passwords do not match.
+          </small>
+        }
+      </div>
+
+      <button type="submit" class="register-button">
+        Create Account
+      </button>
+
+    </form>
+
+    <div class="register-footer">
+      <p>
+        Already have an account?
+        <a routerLink="/login">Sign in</a>
+      </p>
+    </div>
+
+  </div>
+
+</div>
